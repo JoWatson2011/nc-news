@@ -51,11 +51,14 @@ describe("GET /api", () => {
       .expect(200)
       .then((res) => {
         for (endpoint in res.body.endpoints) {
-          expect(res.body.endpoints[endpoint]).toMatchObject({
-            description: expect.any(String),
-            queries: expect.any(Array),
-            exampleResponse: expect.any(Object),
-          });
+          const endpointsFile = require("../endpoints.json");
+
+          return request(app)
+            .get("/api")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.endpoints).toEqual(endpointsFile);
+            });
         }
       });
   });
