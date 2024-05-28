@@ -45,7 +45,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api", () => {
-  test("200: Responds with all the endpoints listed in endpoints.json", () => {
+  test("200: Responds with description of the endpoints listed in endpoints.json", () => {
     return request(app)
       .get("/api")
       .expect(200)
