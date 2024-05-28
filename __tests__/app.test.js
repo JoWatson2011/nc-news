@@ -15,6 +15,17 @@ beforeEach(() => {
 
 afterAll(() => connection.end());
 
+describe("General error handling", () => {
+    test('404: request to a route/endpoint that does not exist', () => {
+        return request(app)
+        .get("/api/catTopics")
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe("Route not found")
+        })
+    });
+})
+
 describe("GET /api/topics", () => {
   test("200: Responds with all topics", () => {
     return request(app)
