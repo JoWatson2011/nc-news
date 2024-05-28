@@ -14,8 +14,8 @@ npm i
    should go in root directory
 
 ```
-echo "PGDATABASE=database_name_here" > .env.test
-echo "PGDATABASE=database_name_here" > .env.development
+echo "PGDATABASE=nc_news_test" > .env.test
+echo "PGDATABASE=nc_news" > .env.development
 ```
 
 ---
