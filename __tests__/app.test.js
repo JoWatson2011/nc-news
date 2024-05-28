@@ -15,8 +15,20 @@ beforeEach(() => {
 
 afterAll(() => connection.end());
 
-describe("", () =>{
-    test('should ', () => {
-        
-    });
-})
+describe("GET /api/topics", () => {
+  test("200: Responds with all topics", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.topics.length).toBe(3);
+
+        res.body.topics.forEach((topic) => {
+          expect(topic).toMatchObject({
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
+      });
+  });
+});
