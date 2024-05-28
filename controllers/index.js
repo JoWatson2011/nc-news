@@ -1,3 +1,3 @@
 const { getTopics } = require("./topics.controller")
-
-module.exports = {getTopics}
+const { getEndpoints} = require("./api.controller")
+module.exports = { getTopics, getEndpoints };
