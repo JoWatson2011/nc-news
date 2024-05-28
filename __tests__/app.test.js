@@ -61,7 +61,7 @@ describe("GET /api", () => {
   });
 });
 
-describe("GET /api/articles", () => {
+describe("GET /api/articles/:id", () => {
   test("200: Responds with an article object of the queried id", () => {
     const expectedArticle = {
       article_id: 1,
