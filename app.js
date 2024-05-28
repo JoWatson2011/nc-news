@@ -11,7 +11,7 @@ app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 
-app.get("/api/articles/:id", getArticlesById);
+app.get("/api/articles/:article_id", getArticlesById);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });

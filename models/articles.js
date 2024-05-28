@@ -1,10 +1,10 @@
 const db = require("../db/connection");
-exports.fetchArticle = (id) => {
+exports.fetchArticle = (article_id) => {
   return db
     .query(
       `SELECT * FROM articles
     WHERE article_id = $1;`,
-      [id]
+      [article_id]
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
