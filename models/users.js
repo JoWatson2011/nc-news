@@ -4,7 +4,7 @@ exports.checkUserExists = (username) => {
   return db
     .query(
       `SELECT * FROM users 
-  WHERE username = $1`,
+  WHERE username = $1;`,
       [username]
     )
     .then(({ rows }) => {
@@ -12,4 +12,10 @@ exports.checkUserExists = (username) => {
         return Promise.reject({ status: 404, msg: "User Not Found" });
       }
     });
+};
+
+exports.fetchUsers = () => {
+  return db.query(`SELECT * FROM users;`).then(({ rows }) => {
+    return rows;
+  });
 };
