@@ -61,9 +61,15 @@ exports.postArticleComments = (req, res, next) => {
 exports.patchArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { votes } = req.body;
-  addVotes(article_id, votes).then((article) => {
-    res.status(200).send({ article });
-  }).catch((err) => {
-    next(err)
-  });
+
+  checkArticleExists(article_id)
+    .then(() => {
+      return addVotes(article_id, votes);
+    })
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

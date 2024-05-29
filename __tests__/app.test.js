@@ -315,4 +315,20 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
+   test("404: Responds with Not Found if the article_id does not exist", () => {
+     return request(app)
+       .patch("/api/articles/2000")
+       .expect(404)
+       .then((res) => {
+         expect(res.body.msg).toEqual("Not Found");
+       });
+   });
+   test("400: Responds with Bad Request when passed an article_id that is not a number", () => {
+     return request(app)
+       .patch("/api/articles/notANumber")
+       .expect(400)
+       .then((res) => {
+         expect(res.body.msg).toBe("Bad Request");
+       });
+   });
 });
