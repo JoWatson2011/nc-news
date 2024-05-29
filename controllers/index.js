@@ -8,6 +8,8 @@ const {
   patchArticle
 } = require("./articles.controller");
 const {deleteComment} = require("./comments.controller")
+const {getUsers} = require("./users.controller")
+
 module.exports = {
   getTopics,
   getEndpoints,
@@ -16,5 +18,6 @@ module.exports = {
   getArticleComments,
   postArticleComments,
   patchArticle,
-  deleteComment
+  deleteComment,
+  getUsers
 };
