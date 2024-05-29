@@ -127,10 +127,65 @@ describe("GET /api/articles", () => {
   });
   test("200: Articles are sorted by date in descending order by default", () => {
     return request(app)
-    .get("/api/articles")
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with the comments for the specified article_id", () => {
+    const expectedComments = [
+      {
+        body: "This is a bad article name",
+        votes: 1,
+        author: "butter_bridge",
+        article_id: 6,
+        created_at: "2020-10-11T15:23:00.000Z",
+        comment_id: 16,
+      },
+    ];
+    return request(app)
+      .get("/api/articles/6/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toEqual(expectedComments);
+      });
+  });
+  test("200: Responds with the comments ordered with most recent first", () => {
+    return request(app)
+    .get("/api/articles/1/comments")
     .expect(200)
     .then((res) => {
-      expect(res.body.articles).toBeSortedBy("created_at", {descending: true})
+      expect(res.body.comments).toBeSortedBy("created_at", {descending: true})
     })
   })
+  test("200: Responds with an empty array if passed an article_id that has no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toEqual([]);
+      });
+  });
+  test("404: Responds with Not Found if the article_id does not exist", () => {
+    return request(app)
+      .get("/api/articles/2000/comments")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toEqual("Not Found");
+      });
+  });
+  test("400: Responds with Bad Request when passed an articl_id that is not a number", () => {
+    return request(app)
+      .get("/api/articles/notANumber/comments")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
 });
