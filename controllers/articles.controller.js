@@ -63,5 +63,7 @@ exports.patchArticle = (req, res, next) => {
   const { votes } = req.body;
   addVotes(article_id, votes).then((article) => {
     res.status(200).send({ article });
+  }).catch((err) => {
+    next(err)
   });
 };

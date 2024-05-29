@@ -294,7 +294,7 @@ describe("PATCH /api/articles/:article_id", () => {
         });
       });
   });
-  xtest("400: Responds with Bad Request when the votes property is missing from the request body", () => {
+  test("400: Responds with Bad Request when the votes property is missing from the request body", () => {
     return request(app)
       .patch("/api/articles/7")
       .send({})
@@ -303,7 +303,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
-  xtest("400: Responds with Bad Request when the votes property is not an integer", () => {
+  test("400: Responds with Bad Request when the votes property is not an integer", () => {
     const updatesForArticle = {
       votes: "notanumber",
     };
