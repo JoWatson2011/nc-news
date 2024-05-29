@@ -246,3 +246,73 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Add votes to the article when votes is a postive number, without altering the other article properties", () => {
+    const updatesForArticle = {
+      votes: 100,
+    };
+
+    return request(app)
+      .patch("/api/articles/7")
+      .send(updatesForArticle)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 7,
+          title: "Z",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "I was hungry.",
+          created_at: "2020-01-07T14:08:00.000Z",
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          votes: 100,
+        });
+      });
+  });
+  test("200: Subtracts votes to the article when votes is a negative number, without altering the other article properties", () => {
+    const updatesForArticle = {
+      votes: -50,
+    };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatesForArticle)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 50,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  xtest("400: Responds with Bad Request when the votes property is missing from the request body", () => {
+    return request(app)
+      .patch("/api/articles/7")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  xtest("400: Responds with Bad Request when the votes property is not an integer", () => {
+    const updatesForArticle = {
+      votes: "notanumber",
+    };
+    return request(app)
+      .patch("/api/articles/7")
+      .send(updatesForArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
