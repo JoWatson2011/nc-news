@@ -206,11 +206,11 @@ describe("POST /api/articles/:article_id/comments", () => {
           body: newComment.body,
           comment_id: expect.any(Number),
           created_at: expect.any(String),
-          votes: expect.any(Number)
+          votes: expect.any(Number),
         });
       });
   });
-  test("404: Responds with User Not Found when the username is not found in the database", () =>{
+  test("404: Responds with User Not Found when the username is not found in the database", () => {
     const newCommentnewUser = {
       username: "PerdHapley",
       body: "What I think about this article is undecided",
@@ -220,11 +220,29 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newCommentnewUser)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("User Not Found")
-      })
+        expect(res.body.msg).toBe("User Not Found");
+      });
   });
-  test.todo("404: Responds with Not Found when article_id is not found")
-  test.todo("400: Responds with Bad Request when fields are missing from request body")
-  test.todo("400: Responds with Bad Request when fields are incorrect data type in request body")
-});
+  test("404: Responds with Not Found when article_id is not found", () => {
+    const newComment = { username: "butter_bridge", body: "Wow" };
 
+    return request(app)
+      .post("/api/articles/200/comments")
+      .send(newComment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not Found");
+      });
+  });
+  test("400: Responds with Bad Request when fields are missing from request body", () => {
+    const newComment = { username: "butter_bridge" };
+
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
