@@ -16,10 +16,6 @@ exports.fetchArticleById = (article_id) => {
 };
 
 exports.fetchArticles = () => {
-  // query comments table - aggregate count on article id
-  // pass into next then block
-  // query articles table -
-
   return db
     .query(
       `SELECT articles.author, articles.title, articles.article_id, articles.topic,
