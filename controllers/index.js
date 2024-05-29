@@ -4,6 +4,7 @@ const {
   getArticlesById,
   getArticles,
   getArticleComments,
+  postArticleComments,
 } = require("./articles.controller");
 module.exports = {
   getTopics,
@@ -11,4 +12,5 @@ module.exports = {
   getArticlesById,
   getArticles,
   getArticleComments,
+  postArticleComments,
 };

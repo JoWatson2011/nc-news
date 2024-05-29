@@ -4,7 +4,8 @@ const {
   getEndpoints,
   getArticlesById,
   getArticles,
-  getArticleComments
+  getArticleComments,
+  postArticleComments,
 } = require("./controllers/index");
 
 const app = express();
@@ -19,6 +20,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticlesById);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
+app.post("/api/articles/:article_id/comments", postArticleComments);
 
 
 app.all("*", (req, res) => {
