@@ -389,7 +389,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   })
 });
 
-describe.only("GET /api/users", () => {
+describe("GET /api/users", () => {
   test("200: Resonds with an array containing all users", () => {
     return request(app)
     .get("/api/users")
