@@ -33,8 +33,22 @@ exports.fetchArticles = () => {
     )
     .then(({ rows }) => {
       return rows.map((row) => {
-        const comment_count = row.comment_count
+        const comment_count = row.comment_count;
         return { ...row, comment_count: Number(comment_count) };
       });
+    });
+};
+
+exports.checkArticleExists = (article_id) => {
+  return db
+    .query(
+      `SELECT * FROM articles
+    WHERE article_id = $1;`,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
     });
 };
