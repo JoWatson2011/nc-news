@@ -23,7 +23,7 @@ exports.getArticles = (req, res, next) => {
   });
 };
 
-exports.getArticleCommentsById = (req, res, next) => {
+exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
 
   checkArticleExists(article_id)
