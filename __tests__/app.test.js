@@ -158,12 +158,14 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
   test("200: Responds with the comments ordered with most recent first", () => {
     return request(app)
-    .get("/api/articles/1/comments")
-    .expect(200)
-    .then((res) => {
-      expect(res.body.comments).toBeSortedBy("created_at", {descending: true})
-    })
-  })
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
   test("200: Responds with an empty array if passed an article_id that has no comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
@@ -183,6 +185,61 @@ describe("GET /api/articles/:article_id/comments", () => {
   test("400: Responds with Bad Request when passed an articl_id that is not a number", () => {
     return request(app)
       .get("/api/articles/notANumber/comments")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the added comment", () => {
+    const newComment = { username: "butter_bridge", body: "Wow" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.comment).toMatchObject({
+          article_id: 2,
+          author: newComment.username,
+          body: newComment.body,
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+        });
+      });
+  });
+  test("404: Responds with User Not Found when the username is not found in the database", () => {
+    const newCommentnewUser = {
+      username: "PerdHapley",
+      body: "What I think about this article is undecided",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newCommentnewUser)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("User Not Found");
+      });
+  });
+  test("404: Responds with Not Found when article_id is not found", () => {
+    const newComment = { username: "butter_bridge", body: "Wow" };
+
+    return request(app)
+      .post("/api/articles/200/comments")
+      .send(newComment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Not Found");
+      });
+  });
+  test("400: Responds with Bad Request when fields are missing from request body", () => {
+    const newComment = { username: "butter_bridge" };
+
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad Request");

@@ -3,12 +3,14 @@ const { getEndpoints } = require("./api.controller");
 const {
   getArticlesById,
   getArticles,
-  getArticleCommentsById,
+  getArticleComments,
+  postArticleComments,
 } = require("./articles.controller");
 module.exports = {
   getTopics,
   getEndpoints,
   getArticlesById,
   getArticles,
-  getArticleCommentsById,
+  getArticleComments,
+  postArticleComments,
 };
