@@ -135,6 +135,26 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200: When passed a valid topic query responds with articles of that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles.length).toBe(1);
+
+        expect(res.body.articles[0]).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+  test.todo("400: Responds with Bad Request when topic query is not valid");
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
@@ -378,7 +398,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .then(({ body }) => {
         expect(body.msg).toEqual("Not Found");
       });
-  })
+  });
   test("400: Responds with Bad Request if comment_id is not an integer", () => {
     return request(app)
       .delete("/api/comments/notanumber")
@@ -386,24 +406,24 @@ describe("DELETE /api/comments/:comment_id", () => {
       .then(({ body }) => {
         expect(body.msg).toEqual("Bad Request");
       });
-  })
+  });
 });
 
 describe("GET /api/users", () => {
   test("200: Resonds with an array containing all users", () => {
     return request(app)
-    .get("/api/users")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.users.length).toBe(4)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
 
-      body.users.forEach((user) => {
-        expect(user).toMatchObject({
-          username: expect.any(String),
-          name: expect.any(String),
-          avatar_url: expect.any(String)
-        })
-      })
-    })
-  })
-})
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});

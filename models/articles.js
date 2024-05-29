@@ -15,17 +15,34 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic,
+exports.fetchArticles = (topic) => {
+  let sqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic,
        articles.created_at, articles.votes, articles.article_img_url, 
        COUNT(comments.comment_id) AS comment_count FROM comments
       RIGHT JOIN articles 
-      ON articles.article_id = comments.article_id
-      GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
+      ON articles.article_id = comments.article_id `;
+  const sqlParams =  []
+  if(topic){
+    sqlQuery += `WHERE articles.topic = $1 `
+    sqlParams.push(topic)
+  }
+
+  sqlQuery += `GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
        articles.created_at, articles.votes,articles.article_img_url
       ORDER BY created_at DESC;`
+  
+  return db
+    .query(
+      sqlQuery,
+      sqlParams
+      // `SELECT articles.author, articles.title, articles.article_id, articles.topic,
+      //  articles.created_at, articles.votes, articles.article_img_url, 
+      //  COUNT(comments.comment_id) AS comment_count FROM comments
+      // RIGHT JOIN articles 
+      // ON articles.article_id = comments.article_id
+      // GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
+      //  articles.created_at, articles.votes,articles.article_img_url
+      // ORDER BY created_at DESC;`
     )
     .then(({ rows }) => {
       return rows.map((row) => {
@@ -50,14 +67,15 @@ exports.checkArticleExists = (article_id) => {
 };
 
 exports.addVotes = (article_id, votes) => {
-
-  return db.query(
-    `UPDATE articles
+  return db
+    .query(
+      `UPDATE articles
     SET votes = votes + $1
     WHERE article_id = $2
-    RETURNING *;`, 
-    [votes, article_id]
-  ).then(({rows}) => {
-    return rows[0]
-  })
-}
+    RETURNING *;`,
+      [votes, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
