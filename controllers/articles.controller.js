@@ -2,9 +2,10 @@ const {
   fetchArticleById,
   fetchArticles,
   checkArticleExists,
+  addVotes,
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
-const {checkUserExists} = require("../models/users")
+const { checkUserExists } = require("../models/users");
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
@@ -53,6 +54,22 @@ exports.postArticleComments = (req, res, next) => {
       res.status(201).send({ comment: newComment });
     })
     .catch((err) => {
-      next(err)
+      next(err);
+    });
+};
+
+exports.patchArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { votes } = req.body;
+
+  checkArticleExists(article_id)
+    .then(() => {
+      return addVotes(article_id, votes);
+    })
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
     });
 };

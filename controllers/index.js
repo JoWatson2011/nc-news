@@ -5,6 +5,7 @@ const {
   getArticles,
   getArticleComments,
   postArticleComments,
+  patchArticle
 } = require("./articles.controller");
 module.exports = {
   getTopics,
@@ -13,4 +14,5 @@ module.exports = {
   getArticles,
   getArticleComments,
   postArticleComments,
+  patchArticle
 };
