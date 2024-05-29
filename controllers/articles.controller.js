@@ -4,6 +4,7 @@ const {
   checkArticleExists,
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
+const {checkUserExists} = require("../models/users")
 
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
@@ -43,10 +44,15 @@ exports.postArticleComments = (req, res, next) => {
   const comment = req.body;
   checkArticleExists(article_id)
     .then(() => {
+      return checkUserExists(comment.username);
+    })
+    .then(() => {
       return addComment(article_id, comment);
     })
     .then((newComment) => {
       res.status(201).send({ comment: newComment });
     })
-    .catch("");
+    .catch((err) => {
+      next(err)
+    });
 };
