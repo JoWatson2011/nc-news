@@ -331,20 +331,60 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
-   test("404: Responds with Not Found if the article_id does not exist", () => {
-     return request(app)
-       .patch("/api/articles/2000")
-       .expect(404)
-       .then((res) => {
-         expect(res.body.msg).toEqual("Not Found");
-       });
-   });
-   test("400: Responds with Bad Request when passed an article_id that is not a number", () => {
-     return request(app)
-       .patch("/api/articles/notANumber")
-       .expect(400)
-       .then((res) => {
-         expect(res.body.msg).toBe("Bad Request");
-       });
-   });
+  test("404: Responds with Not Found if the article_id does not exist", () => {
+    return request(app)
+      .patch("/api/articles/2000")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toEqual("Not Found");
+      });
+  });
+  test("400: Responds with Bad Request when passed an article_id that is not a number", () => {
+    return request(app)
+      .patch("/api/articles/notANumber")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("200: Deletes the comment of the specified comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .get("/api/articles/9/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).toBe(1);
+          });
+      });
+  });
+  test("200: Returns no content in response body", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("404: Responds with Not Found if comment_id is valid but does not exist in comments table", () => {
+    return request(app)
+      .delete("/api/comments/100000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not Found");
+      });
+  })
+  test("400: Responds with Bad Request if comment_id is not an integer", () => {
+    return request(app)
+      .delete("/api/comments/notanumber")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad Request");
+      });
+  })
 });

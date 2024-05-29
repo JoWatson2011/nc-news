@@ -7,6 +7,7 @@ const {
   postArticleComments,
   patchArticle
 } = require("./articles.controller");
+const {deleteComment} = require("./comments.controller")
 module.exports = {
   getTopics,
   getEndpoints,
@@ -14,5 +15,6 @@ module.exports = {
   getArticles,
   getArticleComments,
   postArticleComments,
-  patchArticle
+  patchArticle,
+  deleteComment
 };

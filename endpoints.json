@@ -73,7 +73,7 @@
     }
   },
   "PATCH /api/articles/:article_id/comments": {
-    "description": "Receives and object with a votes property and updates the votes property of the article with article_id. It serves an object with the updated article",
+    "description": "Receives an object with a votes property and updates the votes property of the article with article_id. It serves an object with the updated article",
     "queries": [],
     "exampleResponse": {
       "article_id": 1,
@@ -85,5 +85,10 @@
       "votes": 150,
       "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes the comment of the specified comment id",
+    "queries": [],
+    "exampleResponse": {}
   }
 }
