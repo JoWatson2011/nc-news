@@ -2,14 +2,11 @@ const db = require("../db/connection");
 exports.fetchArticleById = (article_id) => {
   return db
     .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.body,
-       articles.created_at, articles.votes, articles.article_img_url, 
-       COUNT(comments.comment_id) AS comment_count FROM comments
+      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id 
       WHERE comments.article_id = $1
-      GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
-       articles.created_at, articles.votes,articles.article_img_url
+      GROUP BY articles.article_id
       ORDER BY created_at DESC;`,
       [article_id]
     )
@@ -26,9 +23,7 @@ exports.fetchArticleById = (article_id) => {
 };
 
 exports.fetchArticles = (topic) => {
-  let sqlQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic,
-       articles.created_at, articles.votes, articles.article_img_url, 
-       COUNT(comments.comment_id) AS comment_count FROM comments
+  let sqlQuery = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id `;
   const sqlParams = [];
@@ -38,9 +33,8 @@ exports.fetchArticles = (topic) => {
     sqlParams.push(topic);
   }
 
-  sqlQuery += `GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
-       articles.created_at, articles.votes,articles.article_img_url
-      ORDER BY created_at DESC;`;
+  sqlQuery += `GROUP BY articles.article_id
+      ORDER BY created_at DESC`;
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows.map((row) => {
       const comment_count = row.comment_count;
