@@ -491,3 +491,19 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe.only("GET /api/users/:username", () => {
+  test("200: Returns a user object of the specified username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toMatchObject({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  })
+})
