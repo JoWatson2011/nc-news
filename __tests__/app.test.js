@@ -161,16 +161,62 @@ describe("GET /api/articles", () => {
       });
   });
   test("200: Responds with an empty array no articles for a valid topic query", () => {
-    return request(app).get("/api/articles?topic=paper").expect(200).then(({body}) => {
-      expect(body.articles).toEqual([])
-    });
-  })
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
+      });
+  });
   test("404: Responds with Not Found when topic query is not valid - i.e. not found in topic table", () => {
     return request(app)
       .get("/api/articles?topic=32")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not Found");
+      });
+  });
+  test("200: Responds with articles sorted by specified column (in descending order by default) when given a sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("400: Responds with Bad request: sort_by when passed a sort_by query that is not a valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=notvalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: sort_by");
+      });
+  });
+  test("200: Responds with articles sorted in ascending created_at date (by default) when passed an order query of asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at");
+      });
+  });
+  test("400: Responds with Bad Request: order when order query is not asc or desc.", () => {
+    return request(app)
+      .get("/api/articles?order=notanorder")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: order");
+      });
+  });
+  test("200: Handles where, sort_by and order queries in the same request", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes");
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch")
+        });
       });
   });
 });
