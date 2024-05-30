@@ -1,11 +1,14 @@
 const express = require("express");
 const {
   getTopics,
-  deleteComment,
   getUsers
 } = require("./controllers/index");
 
-const {apiRouter, articlesRouter} = require("./routes/index.js")
+const {
+  apiRouter,
+  articlesRouter,
+  commentsRouter,
+} = require("./routes/index.js");
 
 const app = express();
 
@@ -15,9 +18,10 @@ app.use("/api", apiRouter)
 
 app.use("/api/articles", articlesRouter)
 
+app.use("/api/comments/", commentsRouter);
+
 app.get("/api/topics", getTopics);
 
-app.delete("/api/comments/:comment_id", deleteComment);
 
 app.get("/api/users", getUsers)
 
