@@ -10,5 +10,7 @@ exports.getUserById = (req, res, next) => {
 
   fetchUserById(username).then((user) => {
     res.status(200).send({ user });
+  }).catch((err) => {
+    next(err)
   });
 };

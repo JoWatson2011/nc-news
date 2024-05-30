@@ -16,6 +16,12 @@ exports.fetchUserById = (username) => {
       [username]
     )
     .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({
+          status: 404,
+          msg: `Not Found: username ${username}`,
+        });
+      }
       return rows[0];
     });
 };
