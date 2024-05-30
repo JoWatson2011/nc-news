@@ -19,9 +19,12 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic, sort_by) => {
+exports.fetchArticles = (topic, sort_by,order) => {
   if (!sort_by) {
     sort_by = "created_at";
+  }
+  if(!order) {
+    order = "desc"
   }
 
   const sortByValid = [
@@ -35,8 +38,13 @@ exports.fetchArticles = (topic, sort_by) => {
     "article_img_url",
   ];
 
+  
   if (!sortByValid.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Bad Request: sort_by" });
+  }
+  
+  if(!["asc", "desc"].includes(order)){
+     return Promise.reject({ status: 400, msg: "Bad Request: order" });
   }
 
   let sqlQuery = `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
@@ -50,10 +58,9 @@ exports.fetchArticles = (topic, sort_by) => {
   }
 
   sqlQuery += `GROUP BY articles.article_id
-      ORDER BY ${sort_by} DESC;`;
-  console.log(sqlQuery)
+      ORDER BY ${sort_by} ${order.toUpperCase()};`;
+
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
-    
     return rows;
   });
 };

@@ -194,9 +194,23 @@ describe("GET /api/articles", () => {
         });
     }
   );
-  
-  test.todo(
-    "400: Responds with Bad Request: order when order query is not asc or desc."
+  test("200: Responds with articles sorted in ascending created_at date (by default) when passed an order query of asc", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at");
+      });
+  });
+  test(
+    "400: Responds with Bad Request: order when order query is not asc or desc.", () => {
+            return request(app)
+        .get("/api/articles?order=notanorder")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request: order");
+        });
+    }
   );
   test.todo(
     "200: Handles where, sort_by and order queries in the same request"
