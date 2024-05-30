@@ -2,7 +2,7 @@ const db = require("../db/connection");
 exports.fetchArticleById = (article_id) => {
   return db
     .query(
-      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count FROM comments
+      `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id 
       WHERE comments.article_id = $1
@@ -14,16 +14,13 @@ exports.fetchArticleById = (article_id) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       } else {
-        return rows.map((row) => {
-          const comment_count = row.comment_count;
-          return { ...row, comment_count: Number(comment_count) };
-        });
+        return rows
       }
     });
 };
 
 exports.fetchArticles = (topic) => {
-  let sqlQuery = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count FROM comments
+  let sqlQuery = `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id `;
   const sqlParams = [];
