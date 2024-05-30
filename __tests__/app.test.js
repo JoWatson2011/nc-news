@@ -108,10 +108,10 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then((res) => {
-        expect(res.body.articles.length).toBe(13);
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
 
-        res.body.articles.forEach((article) => {
+        body.articles.forEach((article) => {
           expect(article).toMatchObject({
             author: expect.any(String),
             title: expect.any(String),
@@ -129,10 +129,37 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSortedBy("created_at", {
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
+      });
+  });
+  test("200: When passed a valid topic query responds with articles of that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(1);
+
+        expect(body.articles[0]).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
+        });
+      });
+  });
+  test("404: Responds with Not Found when topic query is not valid - i.e. not found in topic table", () => {
+    return request(app)
+      .get("/api/articles?topic=32")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
       });
   });
 });
@@ -210,7 +237,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("404: Responds with User Not Found when the username is not found in the database", () => {
+  test("404: Responds with Not Found when the username is not found in the database", () => {
     const newCommentnewUser = {
       username: "PerdHapley",
       body: "What I think about this article is undecided",
@@ -220,7 +247,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newCommentnewUser)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("User Not Found");
+        expect(res.body.msg).toBe("Not Found");
       });
   });
   test("404: Responds with Not Found when article_id is not found", () => {
@@ -378,7 +405,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .then(({ body }) => {
         expect(body.msg).toEqual("Not Found");
       });
-  })
+  });
   test("400: Responds with Bad Request if comment_id is not an integer", () => {
     return request(app)
       .delete("/api/comments/notanumber")
@@ -386,24 +413,24 @@ describe("DELETE /api/comments/:comment_id", () => {
       .then(({ body }) => {
         expect(body.msg).toEqual("Bad Request");
       });
-  })
+  });
 });
 
 describe("GET /api/users", () => {
   test("200: Resonds with an array containing all users", () => {
     return request(app)
-    .get("/api/users")
-    .expect(200)
-    .then(({body}) => {
-      expect(body.users.length).toBe(4)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users.length).toBe(4);
 
-      body.users.forEach((user) => {
-        expect(user).toMatchObject({
-          username: expect.any(String),
-          name: expect.any(String),
-          avatar_url: expect.any(String)
-        })
-      })
-    })
-  })
-})
+        body.users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
