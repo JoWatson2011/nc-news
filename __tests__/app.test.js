@@ -64,7 +64,7 @@ describe("GET /api", () => {
   });
 });
 
-describe("GET /api/articles/:id", () => {
+describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an article object of the queried id", () => {
     return request(app)
       .get("/api/articles/1")
@@ -215,7 +215,7 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(body.articles).toBeSortedBy("votes");
         body.articles.forEach((article) => {
-          expect(article.topic).toBe("mitch")
+          expect(article.topic).toBe("mitch");
         });
       });
   });
@@ -488,6 +488,30 @@ describe("GET /api/users", () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("200: Responds with a user object of the specified username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toMatchObject({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+  test("404: Responds with Not Found: username <username> if passed a username that is not found", () => {
+    return request(app)
+      .get("/api/users/MrMan")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: username MrMan");
       });
   });
 });
