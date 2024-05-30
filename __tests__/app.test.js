@@ -91,12 +91,12 @@ describe("GET /api/articles/:id", () => {
         expect(res.body.article.comment_count).toEqual(2);
       });
   });
-  test("404: Responds with Not Found when passed an id that isn't in the articles table", () => {
+  test("404: Responds with Not Found: article_id <article_id> when passed an id that isn't in the articles table", () => {
     return request(app)
       .get("/api/articles/300")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("Not Found");
+        expect(res.body.msg).toBe("Not Found: article_id 300");
       });
   });
   test("400: Responds with Bad Request when passed an id that is not a number", () => {
@@ -168,12 +168,12 @@ describe("GET /api/articles", () => {
         expect(body.articles).toEqual([]);
       });
   });
-  test("404: Responds with Not Found when topic query is not valid - i.e. not found in topic table", () => {
+  test("404: Responds with Not Found: <topicQuery> when topic query is not valid - i.e. not found in topic table", () => {
     return request(app)
       .get("/api/articles?topic=32")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Not Found");
+        expect(body.msg).toBe("Not Found: 32");
       });
   });
   test("200: Responds with articles sorted by specified column (in descending order by default) when given a sort_by query", () => {
@@ -258,12 +258,12 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(res.body.comments).toEqual([]);
       });
   });
-  test("404: Responds with Not Found if the article_id does not exist", () => {
+  test("404: Responds with Not Found: <article_id> if the article_id does not exist", () => {
     return request(app)
       .get("/api/articles/2000/comments")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toEqual("Not Found");
+        expect(res.body.msg).toEqual("Not Found: 2000");
       });
   });
   test("400: Responds with Bad Request when passed an articl_id that is not a number", () => {
@@ -294,7 +294,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("404: Responds with Not Found when the username is not found in the database", () => {
+  test("404: Responds with Not Found: <username> when the username is not found in the database", () => {
     const newCommentnewUser = {
       username: "PerdHapley",
       body: "What I think about this article is undecided",
@@ -304,10 +304,10 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newCommentnewUser)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("Not Found");
+        expect(res.body.msg).toBe("Not Found: PerdHapley");
       });
   });
-  test("404: Responds with Not Found when article_id is not found", () => {
+  test("404: Responds with Not Found: <article_id> when article_id is not found", () => {
     const newComment = { username: "butter_bridge", body: "Wow" };
 
     return request(app)
@@ -315,7 +315,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("Not Found");
+        expect(res.body.msg).toBe("Not Found: 200");
       });
   });
   test("400: Responds with Bad Request when fields are missing from request body", () => {
@@ -329,12 +329,12 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad Request");
       });
   });
-  test("404: Responds with Not Found if the article_id does not exist", () => {
+  test("404: Responds with Not Found: <article_id> if the article_id does not exist", () => {
     return request(app)
       .post("/api/articles/2000/comments")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toEqual("Not Found");
+        expect(res.body.msg).toEqual("Not Found: 2000");
       });
   });
   test("400: Responds with Bad Request when passed an article_id that is not a number", () => {
@@ -415,12 +415,12 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
-  test("404: Responds with Not Found if the article_id does not exist", () => {
+  test("404: Responds with Not Found: <article_id> if the article_id does not exist", () => {
     return request(app)
       .patch("/api/articles/2000")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toEqual("Not Found");
+        expect(res.body.msg).toEqual("Not Found: 2000");
       });
   });
   test("400: Responds with Bad Request when passed an article_id that is not a number", () => {
@@ -455,12 +455,12 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(body).toEqual({});
       });
   });
-  test("404: Responds with Not Found if comment_id is valid but does not exist in comments table", () => {
+  test("404: Responds with : <comment_id> if comment_id is valid but does not exist in comments table", () => {
     return request(app)
       .delete("/api/comments/100000")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Not Found");
+        expect(body.msg).toEqual("Not Found: comment 100000");
       });
   });
   test("400: Responds with Bad Request if comment_id is not an integer", () => {
