@@ -237,7 +237,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("404: Responds with User Not Found when the username is not found in the database", () => {
+  test("404: Responds with Not Found when the username is not found in the database", () => {
     const newCommentnewUser = {
       username: "PerdHapley",
       body: "What I think about this article is undecided",
@@ -247,7 +247,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newCommentnewUser)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("User Not Found");
+        expect(res.body.msg).toBe("Not Found");
       });
   });
   test("404: Responds with Not Found when article_id is not found", () => {

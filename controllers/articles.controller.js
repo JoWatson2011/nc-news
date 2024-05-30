@@ -1,11 +1,9 @@
 const {
   fetchArticleById,
   fetchArticles,
-  checkArticleExists,
   addVotes,
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
-const { checkUserExists } = require("../models/users");
 const { checkExists } = require("../models/utils");
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
@@ -41,7 +39,7 @@ exports.getArticles = (req, res, next) => {
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
 
-  checkArticleExists(article_id)
+  checkExists("articles", "article_id", article_id)
     .then((res) => {
       return fetchComments(article_id);
     })
@@ -56,9 +54,9 @@ exports.getArticleComments = (req, res, next) => {
 exports.postArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   const comment = req.body;
-  checkArticleExists(article_id)
+  checkExists("articles", "article_id", article_id)
     .then(() => {
-      return checkUserExists(comment.username);
+      return checkExists("users", "username", comment.username);
     })
     .then(() => {
       return addComment(article_id, comment);
@@ -75,7 +73,7 @@ exports.patchArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { votes } = req.body;
 
-  checkArticleExists(article_id)
+  checkExists("articles", "article_id", article_id)
     .then(() => {
       return addVotes(article_id, votes);
     })

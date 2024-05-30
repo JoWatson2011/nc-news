@@ -21,41 +21,22 @@ exports.fetchArticles = (topic) => {
        COUNT(comments.comment_id) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id `;
-  const sqlParams =  []
+  const sqlParams = [];
 
-  if(topic){
-    sqlQuery += `WHERE articles.topic = $1 `
-    sqlParams.push(topic)
+  if (topic) {
+    sqlQuery += `WHERE articles.topic = $1 `;
+    sqlParams.push(topic);
   }
 
   sqlQuery += `GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
        articles.created_at, articles.votes,articles.article_img_url
-      ORDER BY created_at DESC;`
-  return db
-    .query(
-      sqlQuery,
-      sqlParams
-    )
-    .then(({ rows }) => {
-      return rows.map((row) => {
-        const comment_count = row.comment_count;
-        return { ...row, comment_count: Number(comment_count) };
-      });
+      ORDER BY created_at DESC;`;
+  return db.query(sqlQuery, sqlParams).then(({ rows }) => {
+    return rows.map((row) => {
+      const comment_count = row.comment_count;
+      return { ...row, comment_count: Number(comment_count) };
     });
-};
-
-exports.checkArticleExists = (article_id) => {
-  return db
-    .query(
-      `SELECT * FROM articles
-    WHERE article_id = $1;`,
-      [article_id]
-    )
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      }
-    });
+  });
 };
 
 exports.addVotes = (article_id, votes) => {
