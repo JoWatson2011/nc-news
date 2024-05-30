@@ -12,14 +12,14 @@ exports.fetchArticleById = (article_id) => {
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
+        return Promise.reject({ status: 404, msg: `Not Found: article_id ${article_id}` });
       } else {
         return rows;
       }
     });
 };
 
-exports.fetchArticles = (topic, sort_by,order) => {
+exports.fetchArticles = (topic, sort_by, order) => {
   if (!sort_by) {
     sort_by = "created_at";
   }

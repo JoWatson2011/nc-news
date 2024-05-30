@@ -34,7 +34,7 @@ exports.removeCommentById = (comment_id) => {
     [comment_id]
   ).then(({rows}) => {
     if(!rows.length){
-      return Promise.reject({status: 404, msg: "Not Found" })
+      return Promise.reject({status: 404, msg: `Not Found: comment ${comment_id}` })
     }
   })
 };
