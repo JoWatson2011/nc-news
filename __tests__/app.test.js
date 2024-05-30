@@ -66,23 +66,29 @@ describe("GET /api", () => {
 
 describe("GET /api/articles/:id", () => {
   test("200: Responds with an article object of the queried id", () => {
-    const expectedArticle = {
-      article_id: 1,
-      title: "Living in the shadow of a great man",
-      topic: "mitch",
-      author: "butter_bridge",
-      body: "I find this existence challenging",
-      created_at: "2020-07-09T20:11:00.000Z",
-      votes: 100,
-      article_img_url:
-        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-    };
-
     return request(app)
       .get("/api/articles/1")
       .expect(200)
       .then((res) => {
-        expect(res.body.article).toEqual(expectedArticle);
+        expect(res.body.article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("200: Responds with the number of comments for the speicified article on a key of comment_count", () => {
+    return request(app)
+      .get("/api/articles/9")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.article.comment_count).toEqual(2);
       });
   });
   test("404: Responds with Not Found when passed an id that isn't in the articles table", () => {
