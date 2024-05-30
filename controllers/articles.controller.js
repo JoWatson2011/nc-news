@@ -6,7 +6,7 @@ const {
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
 const { checkUserExists } = require("../models/users");
-
+const { checkExists } = require("../models/utils");
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
 
@@ -22,9 +22,20 @@ exports.getArticlesById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const { topic } = req.query;
 
-  fetchArticles(topic).then((articles) => {
-    res.status(200).send({ articles });
-  });
+  Promise.all([checkExists("topics", "slug", topic), fetchArticles(topic)])
+    .then((promiseArr) => {
+      const checkTopic = promiseArr[0];
+
+      const articles = promiseArr[1];
+
+      return checkTopic ? checkTopic : articles;
+    })
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getArticleComments = (req, res, next) => {

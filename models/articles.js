@@ -22,6 +22,7 @@ exports.fetchArticles = (topic) => {
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id `;
   const sqlParams =  []
+
   if(topic){
     sqlQuery += `WHERE articles.topic = $1 `
     sqlParams.push(topic)
@@ -30,7 +31,6 @@ exports.fetchArticles = (topic) => {
   sqlQuery += `GROUP BY articles.author, articles.title, articles.article_id, articles.topic,
        articles.created_at, articles.votes,articles.article_img_url
       ORDER BY created_at DESC;`
-  
   return db
     .query(
       sqlQuery,

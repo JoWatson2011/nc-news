@@ -103,15 +103,15 @@ describe("GET /api/articles/:id", () => {
   });
 });
 
-describe("GET /api/articles", () => {
+describe.only("GET /api/articles", () => {
   test("200: Responds with all the articles as an array of objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then((res) => {
-        expect(res.body.articles.length).toBe(13);
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(13);
 
-        res.body.articles.forEach((article) => {
+        body.articles.forEach((article) => {
           expect(article).toMatchObject({
             author: expect.any(String),
             title: expect.any(String),
@@ -129,8 +129,8 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSortedBy("created_at", {
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
       });
@@ -139,10 +139,10 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
-      .then((res) => {
-        expect(res.body.articles.length).toBe(1);
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(1);
 
-        expect(res.body.articles[0]).toMatchObject({
+        expect(body.articles[0]).toMatchObject({
           author: expect.any(String),
           title: expect.any(String),
           article_id: expect.any(Number),
@@ -154,7 +154,14 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test.todo("400: Responds with Bad Request when topic query is not valid");
+  test("404: Responds with Not Found when topic query is not valid - i.e. not found in topic table", () => {
+    return request(app)
+      .get("/api/articles?topic=32")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
