@@ -473,6 +473,39 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: Add votes to the comment when votes is a postive number, without altering the other comment properties", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 26,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+  test("200: Subtracts votes from the comment when votes is a negative number, without altering the other comment properties", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 6,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+});
+
 describe("GET /api/users", () => {
   test("200: Resonds with an array containing all users", () => {
     return request(app)
