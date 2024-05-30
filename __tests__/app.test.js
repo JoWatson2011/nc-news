@@ -103,7 +103,7 @@ describe("GET /api/articles/:id", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("200: Responds with all the articles as an array of objects", () => {
     return request(app)
       .get("/api/articles")
