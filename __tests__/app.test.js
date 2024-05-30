@@ -152,7 +152,7 @@ describe("GET /api/articles", () => {
           author: expect.any(String),
           title: expect.any(String),
           article_id: expect.any(Number),
-          topic: expect.any(String),
+          topic: "cats",
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
