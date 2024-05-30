@@ -154,6 +154,11 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200: Responds with an empty array no articles for a valid topic query", () => {
+    return request(app).get("/api/articles?topic=paper").expect(200).then(({body}) => {
+      expect(body.articles).toEqual([])
+    });
+  })
   test("404: Responds with Not Found when topic query is not valid - i.e. not found in topic table", () => {
     return request(app)
       .get("/api/articles?topic=32")
