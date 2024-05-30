@@ -14,12 +14,31 @@ exports.fetchArticleById = (article_id) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       } else {
-        return rows
+        return rows;
       }
     });
 };
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (topic, sort_by) => {
+  if (!sort_by) {
+    sort_by = "created_at";
+  }
+
+  const sortByValid = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "article_img_url",
+  ];
+
+  if (!sortByValid.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad Request: sort_by" });
+  }
+
   let sqlQuery = `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id `;
@@ -31,12 +50,11 @@ exports.fetchArticles = (topic) => {
   }
 
   sqlQuery += `GROUP BY articles.article_id
-      ORDER BY created_at DESC`;
+      ORDER BY ${sort_by} DESC;`;
+  console.log(sqlQuery)
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
-    return rows.map((row) => {
-      const comment_count = row.comment_count;
-      return { ...row, comment_count: Number(comment_count) };
-    });
+    
+    return rows;
   });
 };
 
