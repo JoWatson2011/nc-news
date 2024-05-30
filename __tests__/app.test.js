@@ -152,7 +152,7 @@ describe("GET /api/articles", () => {
           author: expect.any(String),
           title: expect.any(String),
           article_id: expect.any(Number),
-          topic: expect.any(String),
+          topic: "cats",
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
@@ -388,7 +388,7 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-  test("200: Deletes the comment of the specified comment_id", () => {
+  test("204: Deletes the comment of the specified comment_id", () => {
     return request(app)
       .delete("/api/comments/1")
       .expect(204)
@@ -401,7 +401,7 @@ describe("DELETE /api/comments/:comment_id", () => {
           });
       });
   });
-  test("200: Returns no content in response body", () => {
+  test("204: Returns no content in response body", () => {
     return request(app)
       .delete("/api/comments/1")
       .expect(204)
