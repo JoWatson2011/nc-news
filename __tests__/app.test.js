@@ -184,16 +184,14 @@ describe("GET /api/articles", () => {
         expect(body.articles).toBeSortedBy("votes", { descending: true });
       });
   });
-  test(
-    "400: Responds with Bad request: sort_by when passed a sort_by query that is not a valid column", () => {
-      return request(app)
-        .get("/api/articles?sort_by=notvalid")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad Request: sort_by");
-        });
-    }
-  );
+  test("400: Responds with Bad request: sort_by when passed a sort_by query that is not a valid column", () => {
+    return request(app)
+      .get("/api/articles?sort_by=notvalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: sort_by");
+      });
+  });
   test("200: Responds with articles sorted in ascending created_at date (by default) when passed an order query of asc", () => {
     return request(app)
       .get("/api/articles?order=asc")
@@ -202,19 +200,25 @@ describe("GET /api/articles", () => {
         expect(body.articles).toBeSortedBy("created_at");
       });
   });
-  test(
-    "400: Responds with Bad Request: order when order query is not asc or desc.", () => {
-            return request(app)
-        .get("/api/articles?order=notanorder")
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad Request: order");
+  test("400: Responds with Bad Request: order when order query is not asc or desc.", () => {
+    return request(app)
+      .get("/api/articles?order=notanorder")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: order");
+      });
+  });
+  test("200: Handles where, sort_by and order queries in the same request", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes");
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch")
         });
-    }
-  );
-  test.todo(
-    "200: Handles where, sort_by and order queries in the same request"
-  );
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
