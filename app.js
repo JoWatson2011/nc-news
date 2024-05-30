@@ -11,11 +11,14 @@ const {
   getUsers
 } = require("./controllers/index");
 
+const apiRouter = require("./routes/api-router.js")
+
 const app = express();
 
 app.use(express.json());
 
-app.get("/api", getEndpoints);
+app.use("/api", apiRouter)
+// app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
 
