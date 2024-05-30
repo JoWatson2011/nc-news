@@ -1,6 +1,5 @@
 const express = require("express");
 const {
-  getTopics,
   getUsers
 } = require("./controllers/index");
 
@@ -8,6 +7,7 @@ const {
   apiRouter,
   articlesRouter,
   commentsRouter,
+  topicsRouter,
 } = require("./routes/index.js");
 
 const app = express();
@@ -20,7 +20,7 @@ app.use("/api/articles", articlesRouter)
 
 app.use("/api/comments/", commentsRouter);
 
-app.get("/api/topics", getTopics);
+app.use("/api/topics", topicsRouter);
 
 
 app.get("/api/users", getUsers)
