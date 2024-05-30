@@ -473,6 +473,79 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: Add votes to the comment when votes is a postive number, without altering the other comment properties", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 26,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+  test("200: Subtracts votes from the comment when votes is a negative number, without altering the other comment properties", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toMatchObject({
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 6,
+          author: "butter_bridge",
+          article_id: 9,
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+  test("400: Responds with Bad Request when the votes property is missing from the request body", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: Responds with Bad Request when the votes property is not an integer", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: "notanumber" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test(
+    "404: Responds with Not Found: <comment_id> if the comment_id does not exist", () => {
+    return request(app)
+      .patch("/api/comments/10009")
+      .send({ votes: 12 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: 10009");
+      });
+});
+  test(
+    "400: Responds with Bad Request when passed a comment_id that is not a number",
+    () => {
+      return request(app)
+        .patch("/api/comments/notanumber")
+        .send({ votes: 12 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    }
+  );
+});
+
 describe("GET /api/users", () => {
   test("200: Resonds with an array containing all users", () => {
     return request(app)

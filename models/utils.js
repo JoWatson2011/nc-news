@@ -9,3 +9,20 @@ exports.checkExists = (table, column, value) => {
     }
   });
 };
+
+exports.addVotes = (table, column, value, votes) => {
+  const queryStr = format(
+    `UPDATE %I
+    SET votes = votes + $1
+    WHERE %I = $2
+    RETURNING *;`, table, column);
+
+  return db
+    .query(
+      queryStr,
+      [votes, value]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

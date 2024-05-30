@@ -1,10 +1,9 @@
 const {
   fetchArticleById,
   fetchArticles,
-  addVotes,
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
-const { checkExists } = require("../models/utils");
+const { checkExists, addVotes } = require("../models/utils");
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
 
@@ -78,7 +77,7 @@ exports.patchArticle = (req, res, next) => {
 
   checkExists("articles", "article_id", article_id)
     .then(() => {
-      return addVotes(article_id, votes);
+      return addVotes("articles", "article_id", article_id, votes);
     })
     .then((article) => {
       res.status(200).send({ article });
