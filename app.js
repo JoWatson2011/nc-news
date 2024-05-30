@@ -1,13 +1,11 @@
 const express = require("express");
-const {
-  getUsers
-} = require("./controllers/index");
 
 const {
   apiRouter,
   articlesRouter,
   commentsRouter,
   topicsRouter,
+  usersRouter,
 } = require("./routes/index.js");
 
 const app = express();
@@ -22,8 +20,7 @@ app.use("/api/comments/", commentsRouter);
 
 app.use("/api/topics", topicsRouter);
 
-
-app.get("/api/users", getUsers)
+app.use("/api/users", usersRouter);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });
