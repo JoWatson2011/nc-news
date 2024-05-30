@@ -504,6 +504,46 @@ describe("PATCH /api/comments/:comment_id", () => {
         });
       });
   });
+  test("400: Responds with Bad Request when the votes property is missing from the request body", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: Responds with Bad Request when the votes property is not an integer", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ votes: "notanumber" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test(
+    "404: Responds with Not Found: <comment_id> if the comment_id does not exist", () => {
+    return request(app)
+      .patch("/api/comments/10009")
+      .send({ votes: 12 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: 10009");
+      });
+});
+  test(
+    "400: Responds with Bad Request when passed a comment_id that is not a number",
+    () => {
+      return request(app)
+        .patch("/api/comments/notanumber")
+        .send({ votes: 12 })
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    }
+  );
 });
 
 describe("GET /api/users", () => {

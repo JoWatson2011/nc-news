@@ -1,5 +1,5 @@
 const { removeCommentById } = require("../models/comments");
-const {addVotes} = require("../models/utils")
+const {addVotes, checkExists} = require("../models/utils")
 exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params;
 
@@ -16,8 +16,12 @@ exports.patchComment = (req, res, next) => {
   const { comment_id } = req.params;
   const { votes } = req.body;
 
-  addVotes("comments", "comment_id", comment_id, votes)
+  checkExists("comments", "comment_id", comment_id).then(()=>{
+    return addVotes("comments", "comment_id", comment_id, votes)
+  })
   .then((comment)=> {
     res.status(200).send({comment})
+  }).catch((err) => {
+    next(err)
   });
 };
