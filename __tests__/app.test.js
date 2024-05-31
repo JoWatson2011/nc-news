@@ -229,7 +229,7 @@ describe("GET /api/articles", () => {
   });
 });
 
-xdescribe("POST /api/articles/", () => {
+describe("POST /api/articles/", () => {
   test("201: Responds with the added article", () => {
     const newArticle = {
       author: "butter_bridge",

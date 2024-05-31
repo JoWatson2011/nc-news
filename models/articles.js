@@ -17,7 +17,7 @@ exports.fetchArticleById = (article_id) => {
           msg: `Not Found: article_id ${article_id}`,
         });
       } else {
-        return rows;
+        return rows[0];
       }
     });
 };
