@@ -238,20 +238,34 @@ describe("GET /api/articles", () => {
   });
   test("200: Responds with the first x articles and total_count property when p is 1 and limit is x", () => {
     return request(app)
-      .get("/api/articles?p=2&limit=3")
+      .get("/api/articles?p=1&limit=3")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toHaveLength(3);
 
         body.articles.forEach((article) => {
-          expect([12, 13, 5].includes(article.article_id)).toBeTruthy();
+          console.log(article.article_id)
+          expect([3, 6, 2].includes(article.article_id)).toBeTruthy();
         });
 
         expect(body.total_count).toBe(13);
       });
   });
-  test.todo(
-    "200: Responds with the second x articles and total_count property when p is 3 and limit is x"
+  test(
+    "200: Responds with the second x articles and total_count property when p is >1 and limit is x", () => {
+      return request(app)
+        .get("/api/articles?p=2&limit=3")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles).toHaveLength(3);
+
+          body.articles.forEach((article) => {
+            expect([12, 13, 5].includes(article.article_id)).toBeTruthy();
+          });
+
+          expect(body.total_count).toBe(13);
+        });
+    }
   );
   test.todo("400: Responds with Bad Request if p is not a number");
   test.todo("400: Responds with Bad Request if limit is not a number");

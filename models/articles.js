@@ -57,7 +57,7 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
   if (topic) {
     sqlQuery += `WHERE articles.topic = $1 `;
     sqlParams.push(topic);
-  } 
+  }
 
   sqlQuery += `GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order.toUpperCase()} `;
@@ -67,13 +67,18 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
       limit = 10;
     }
 
+    const paramsIndex = topic ? 2 : 1;
+    const offsetVal = p * limit - limit;
+
     sqlParams.push(limit);
-    sqlParams.push(p * limit - limit);
-    const paramsIndex = topic ? 2 : 1 ;
-    sqlQuery += `LIMIT $${paramsIndex} OFFSET $${paramsIndex+1}`;
+
+    sqlQuery += `LIMIT $${paramsIndex} `;
+    if (offsetVal > 0) {
+      sqlParams.push(offsetVal);
+      sqlQuery += `OFFSET $${paramsIndex + 1}`;
+    }
   }
   sqlQuery += ";";
-  
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows;
   });
