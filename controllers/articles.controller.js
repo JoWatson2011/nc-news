@@ -1,6 +1,7 @@
 const {
   fetchArticleById,
   fetchArticles,
+  addArticle,
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
 const { checkExists, addVotes } = require("../models/utils");
@@ -9,7 +10,7 @@ exports.getArticlesById = (req, res, next) => {
 
   fetchArticleById(article_id)
     .then((article) => {
-      res.status(200).send({ article: article[0] });
+      res.status(200).send({ article: article });
     })
     .catch((err) => {
       next(err);
@@ -17,8 +18,8 @@ exports.getArticlesById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order} = req.query;
-  
+  const { topic, sort_by, order } = req.query;
+
   Promise.all([
     checkExists("topics", "slug", topic),
     fetchArticles(topic, sort_by, order),
@@ -81,6 +82,27 @@ exports.patchArticle = (req, res, next) => {
     })
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = (req, res, next) => {
+  const newArticle = req.body;
+
+  checkExists("users", "username", newArticle.author)
+    .then(() => {
+      return checkExists("topics", "slug", newArticle.topic);
+    })
+    .then(() => {
+      return addArticle(newArticle);
+    })
+    .then((postedArticle) => {
+      return fetchArticleById(postedArticle.article_id);
+    })
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch((err) => {
       next(err);

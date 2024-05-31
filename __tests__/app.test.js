@@ -91,6 +91,14 @@ describe("GET /api/articles/:article_id", () => {
         expect(res.body.article.comment_count).toEqual(2);
       });
   });
+  test("200: Responds with 0 on the comment_count key when article has no comments", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.article.comment_count).toEqual(0);
+      });
+  });
   test("404: Responds with Not Found: article_id <article_id> when passed an id that isn't in the articles table", () => {
     return request(app)
       .get("/api/articles/300")
@@ -217,6 +225,82 @@ describe("GET /api/articles", () => {
         body.articles.forEach((article) => {
           expect(article.topic).toBe("mitch");
         });
+      });
+  });
+});
+
+describe("POST /api/articles/", () => {
+  test("201: Responds with the added article", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "miaow",
+      body: "miaow",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          author: newArticle.author,
+          title: newArticle.title,
+          body: newArticle.body,
+          topic: newArticle.topic,
+          article_img_url:
+            "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          article_id: 14,
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+        });
+      });
+  });
+  test("404: Responds with Not Found: <username> when the username is not found in the database", () => {
+    const newArticle = {
+      author: "MrMan",
+      title: "miaow",
+      body: "miaow",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: MrMan");
+      });
+  });
+  test("404: Responds with Not Found: <topic> when topic is not found", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "miaow",
+      body: "miaow",
+      topic: "butter",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: butter");
+      });
+  });
+  test("400: Responds with Bad Request when fields are missing from request body", () => {
+    const newArticle = {
+      body: "miaow",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });
@@ -522,8 +606,7 @@ describe("PATCH /api/comments/:comment_id", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
-  test(
-    "404: Responds with Not Found: <comment_id> if the comment_id does not exist", () => {
+  test("404: Responds with Not Found: <comment_id> if the comment_id does not exist", () => {
     return request(app)
       .patch("/api/comments/10009")
       .send({ votes: 12 })
@@ -531,19 +614,16 @@ describe("PATCH /api/comments/:comment_id", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("Not Found: 10009");
       });
-});
-  test(
-    "400: Responds with Bad Request when passed a comment_id that is not a number",
-    () => {
-      return request(app)
-        .patch("/api/comments/notanumber")
-        .send({ votes: 12 })
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Bad Request");
-        });
-    }
-  );
+  });
+  test("400: Responds with Bad Request when passed a comment_id that is not a number", () => {
+    return request(app)
+      .patch("/api/comments/notanumber")
+      .send({ votes: 12 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/users", () => {

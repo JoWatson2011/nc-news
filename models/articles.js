@@ -5,16 +5,19 @@ exports.fetchArticleById = (article_id) => {
       `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
       RIGHT JOIN articles 
       ON articles.article_id = comments.article_id 
-      WHERE comments.article_id = $1
+      WHERE articles.article_id = $1
       GROUP BY articles.article_id
       ORDER BY created_at DESC;`,
       [article_id]
     )
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: `Not Found: article_id ${article_id}` });
+        return Promise.reject({
+          status: 404,
+          msg: `Not Found: article_id ${article_id}`,
+        });
       } else {
-        return rows;
+        return rows[0];
       }
     });
 };
@@ -23,8 +26,8 @@ exports.fetchArticles = (topic, sort_by, order) => {
   if (!sort_by) {
     sort_by = "created_at";
   }
-  if(!order) {
-    order = "desc"
+  if (!order) {
+    order = "desc";
   }
 
   const sortByValid = [
@@ -38,13 +41,12 @@ exports.fetchArticles = (topic, sort_by, order) => {
     "article_img_url",
   ];
 
-  
   if (!sortByValid.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Bad Request: sort_by" });
   }
-  
-  if(!["asc", "desc"].includes(order)){
-     return Promise.reject({ status: 400, msg: "Bad Request: order" });
+
+  if (!["asc", "desc"].includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad Request: order" });
   }
 
   let sqlQuery = `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
@@ -63,4 +65,20 @@ exports.fetchArticles = (topic, sort_by, order) => {
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows;
   });
+};
+
+exports.addArticle = (newArticle) => {
+  const { title, topic, author, body } = newArticle;
+
+  return db
+    .query(
+      `INSERT INTO articles (title, topic, author,body)
+    VALUES 
+    ($1, $2, $3, $4)
+    RETURNING *`,
+      [title, topic, author, body]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    })
 };
