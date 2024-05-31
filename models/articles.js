@@ -22,7 +22,7 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic, sort_by, order) => {
+exports.fetchArticles = (topic, sort_by, order, p) => {
   if (!sort_by) {
     sort_by = "created_at";
   }
@@ -60,8 +60,12 @@ exports.fetchArticles = (topic, sort_by, order) => {
   }
 
   sqlQuery += `GROUP BY articles.article_id
-      ORDER BY ${sort_by} ${order.toUpperCase()};`;
+      ORDER BY ${sort_by} ${order.toUpperCase()} `;
 
+  if(p) {
+    sqlQuery += `LIMIT 10`
+  }
+  sqlQuery += ";"
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows;
   });

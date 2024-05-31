@@ -117,7 +117,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe("GET /api/articles", () => {
+describe.only("GET /api/articles", () => {
   test("200: Responds with all the articles as an array of objects", () => {
     return request(app)
       .get("/api/articles")
@@ -227,6 +227,37 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200: Responds with the first 10 articles and total_count property when p query is 1", () => {
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(10);
+        expect(body.total_count).toBe(13);
+      });
+  });
+  xtest("200: Responds with the first x articles and total_count property when p is 1 and limit is x", () => {
+    return request(app)
+      .get("/api/articles?p=2&limit=3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(3);
+
+        body.articles.forEach((article) => {
+          expect([12, 13, 5].includes(article.article_id)).toBeTruthy();
+        });
+
+        expect(body.total_count).toBe(13);
+      });
+  });
+  test.todo(
+    "200: Responds with the second x articles and total_count property when p is 3 and limit is x"
+  );
+  test.todo("400: Responds with Bad Request if p is not a number");
+  test.todo("400: Responds with Bad Request if limit is not a number");
+  test.todo(
+    "404: Responds with Not Found if p and l request records higher than total_count"
+  );
 });
 
 describe("POST /api/articles/", () => {
