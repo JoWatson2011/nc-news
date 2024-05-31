@@ -1,4 +1,8 @@
-const { fetchArticleById, fetchArticles, addArticle} = require("../models/articles");
+const {
+  fetchArticleById,
+  fetchArticles,
+  addArticle,
+} = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
 const { checkExists, addVotes } = require("../models/utils");
 exports.getArticlesById = (req, res, next) => {
@@ -85,12 +89,22 @@ exports.patchArticle = (req, res, next) => {
 };
 
 exports.postArticle = (req, res, next) => {
-  const newArticle  = req.body;
+  const newArticle = req.body;
 
-  addArticle(newArticle).then((postedArticle) => {
-    return fetchArticleById(postedArticle.article_id);
-
-  }).then((article) => {
-    res.status(201).send({ article });
-  });
+  checkExists("users", "username", newArticle.author)
+    .then(() => {
+      return checkExists("topics", "slug", newArticle.topic);
+    })
+    .then(() => {
+      return addArticle(newArticle);
+    })
+    .then((postedArticle) => {
+      return fetchArticleById(postedArticle.article_id);
+    })
+    .then((article) => {
+      res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

@@ -257,6 +257,52 @@ describe("POST /api/articles/", () => {
         });
       });
   });
+  test("404: Responds with Not Found: <username> when the username is not found in the database", () => {
+    const newArticle = {
+      author: "MrMan",
+      title: "miaow",
+      body: "miaow",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: MrMan");
+      });
+  });
+  test("404: Responds with Not Found: <topic> when topic is not found", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "miaow",
+      body: "miaow",
+      topic: "butter",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found: butter");
+      });
+  });
+  test("400: Responds with Bad Request when fields are missing from request body", () => {
+    const newArticle = {
+      body: "miaow",
+      topic: "cats",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
