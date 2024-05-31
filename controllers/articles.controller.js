@@ -18,11 +18,11 @@ exports.getArticlesById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order, p } = req.query;
+  const { topic, sort_by, order, p, limit } = req.query;
 
   Promise.all([
     checkExists("topics", "slug", topic),
-    fetchArticles(topic, sort_by, order, p),
+    fetchArticles(topic, sort_by, order, p, limit),
   ])
     .then((promiseArr) => {
       const checkTopic = promiseArr[0];
@@ -33,7 +33,6 @@ exports.getArticles = (req, res, next) => {
     })
     .then((articles) => {
       if (!p) res.status(200).send({ articles });
-
       return Promise.all([articles, getTotalCount("articles")]);
     })
     .then((promiseArr) => {

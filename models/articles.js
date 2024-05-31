@@ -22,7 +22,7 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic, sort_by, order, p) => {
+exports.fetchArticles = (topic, sort_by, order, p, limit) => {
   if (!sort_by) {
     sort_by = "created_at";
   }
@@ -50,22 +50,30 @@ exports.fetchArticles = (topic, sort_by, order, p) => {
   }
 
   let sqlQuery = `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
-      RIGHT JOIN articles 
-      ON articles.article_id = comments.article_id `;
+  RIGHT JOIN articles 
+  ON articles.article_id = comments.article_id `;
   const sqlParams = [];
 
   if (topic) {
     sqlQuery += `WHERE articles.topic = $1 `;
     sqlParams.push(topic);
-  }
+  } 
 
   sqlQuery += `GROUP BY articles.article_id
-      ORDER BY ${sort_by} ${order.toUpperCase()} `;
+  ORDER BY ${sort_by} ${order.toUpperCase()} `;
 
-  if(p) {
-    sqlQuery += `LIMIT 10`
+  if (p) {
+    if (!limit) {
+      limit = 10;
+    }
+
+    sqlParams.push(limit);
+    sqlParams.push(p * limit - limit);
+    const paramsIndex = topic ? 2 : 1 ;
+    sqlQuery += `LIMIT $${paramsIndex} OFFSET $${paramsIndex+1}`;
   }
-  sqlQuery += ";"
+  sqlQuery += ";";
+  
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows;
   });
@@ -84,5 +92,5 @@ exports.addArticle = (newArticle) => {
     )
     .then(({ rows }) => {
       return rows[0];
-    })
+    });
 };

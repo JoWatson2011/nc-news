@@ -117,7 +117,7 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
   test("200: Responds with all the articles as an array of objects", () => {
     return request(app)
       .get("/api/articles")
@@ -236,7 +236,7 @@ describe.only("GET /api/articles", () => {
         expect(body.total_count).toBe(13);
       });
   });
-  xtest("200: Responds with the first x articles and total_count property when p is 1 and limit is x", () => {
+  test("200: Responds with the first x articles and total_count property when p is 1 and limit is x", () => {
     return request(app)
       .get("/api/articles?p=2&limit=3")
       .expect(200)
