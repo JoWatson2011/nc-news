@@ -32,7 +32,7 @@
       ]
     }
   },
-  "GET /api/articles/:id": {
+  "GET /api/articles/:article_id": {
     "description": "serves an object with article of specified id",
     "queries": [],
     "exampleResponse": {
@@ -116,15 +116,29 @@
       "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
     }
   },
-  "PATCH /api/comments/:comment_id":{
+  "PATCH /api/comments/:comment_id": {
     "description": "Receives votes to be added to the specified comment and serves the updated object",
     "queries": [],
-    "exampleResponse":   {
-    "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-    "votes": 16,
-    "author": "butter_bridge",
-    "article_id": 9,
-    "created_at": 1586179020000
+    "exampleResponse": {
+      "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      "votes": 16,
+      "author": "butter_bridge",
+      "article_id": 9,
+      "created_at": 1586179020000
+    }
+  },
+  "POST /api/articles": {
+    "description": "Receives an article object with author, title, body and topic properties and servers the added article",
+    "queries": [],
+    "exampleResponse": {
+      "article_id": 1,
+      "title": "Living in the shadow of a great man",
+      "topic": "mitch",
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "created_at": "2020-07-09T20:11:00.000Z",
+      "votes": 100,
+      "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    }
   }
-}
 }
