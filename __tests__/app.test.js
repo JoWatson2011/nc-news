@@ -244,31 +244,65 @@ describe("GET /api/articles", () => {
         expect(body.articles).toHaveLength(3);
 
         body.articles.forEach((article) => {
-          console.log(article.article_id)
           expect([3, 6, 2].includes(article.article_id)).toBeTruthy();
         });
 
         expect(body.total_count).toBe(13);
       });
   });
-  test(
-    "200: Responds with the second x articles and total_count property when p is >1 and limit is x", () => {
-      return request(app)
-        .get("/api/articles?p=2&limit=3")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.articles).toHaveLength(3);
+  test("200: Responds with the second x articles and total_count property when p is >1 and limit is x", () => {
+    return request(app)
+      .get("/api/articles?p=2&limit=3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(3);
 
-          body.articles.forEach((article) => {
-            expect([12, 13, 5].includes(article.article_id)).toBeTruthy();
-          });
-
-          expect(body.total_count).toBe(13);
+        body.articles.forEach((article) => {
+          expect([12, 13, 5].includes(article.article_id)).toBeTruthy();
         });
-    }
-  );
-  test.todo("400: Responds with Bad Request if p is not a number");
-  test.todo("400: Responds with Bad Request if limit is not a number");
+
+        expect(body.total_count).toBe(13);
+      });
+  });
+  test("200: Handles topic, p and limit in the same request", () => {
+    return request(app)
+      .get("/api/articles?p=1&limit=3&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(3);
+
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+
+        expect(body.total_count).toBe(13);
+      });
+  });
+  test("200: Responds with the first x articles and total_count property when p isn't queried and limit is x", () => {
+    return request(app)
+      .get("/api/articles?limit=3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(3);
+        expect(body.total_count).toBe(13);
+      });
+  });
+  test("400: Responds with Bad Request if p is not a number", () => {
+    return request(app)
+      .get("/api/articles?p=cats")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: Responds with Bad Request if limit is not a number", () => {
+    return request(app)
+      .get("/api/articles?p=cats")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
   test.todo(
     "404: Responds with Not Found if p and l request records higher than total_count"
   );

@@ -32,7 +32,7 @@ exports.getArticles = (req, res, next) => {
       return checkTopic ? checkTopic : articles;
     })
     .then((articles) => {
-      if (!p) res.status(200).send({ articles });
+      if (!p & !limit) res.status(200).send({ articles });
       return Promise.all([articles, getTotalCount("articles")]);
     })
     .then((promiseArr) => {

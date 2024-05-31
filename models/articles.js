@@ -61,8 +61,11 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
 
   sqlQuery += `GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order.toUpperCase()} `;
-
+  
   if (p) {
+
+    if(!parseInt(p)) return Promise.reject({status:400, msg: "Bad Request"})
+
     if (!limit) {
       limit = 10;
     }
@@ -77,6 +80,16 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
       sqlParams.push(offsetVal);
       sqlQuery += `OFFSET $${paramsIndex + 1}`;
     }
+  }
+
+  if (!p & limit) {
+
+    if (!parseInt(limit))
+      return Promise.reject({ status: 400, msg: "Bad Request" });
+
+    const paramsIndex = topic ? 2 : 1;
+    sqlParams.push(limit);
+    sqlQuery += `LIMIT $${paramsIndex} `;
   }
   sqlQuery += ";";
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
