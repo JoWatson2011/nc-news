@@ -287,23 +287,27 @@ describe("GET /api/articles", () => {
         expect(body.total_count).toBe(13);
       });
   });
-  test("400: Responds with Bad Request if p is not a number", () => {
+  test("400: Responds with Bad Request: p if p is not a number", () => {
     return request(app)
       .get("/api/articles?p=cats")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Bad Request: p");
       });
   });
-  test("400: Responds with Bad Request if limit is not a number", () => {
+  test("400: Responds with Bad Request: limit if limit is not a number", () => {
     return request(app)
-      .get("/api/articles?p=cats")
+      .get("/api/articles?limit=cats")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad Request");
+        expect(body.msg).toBe("Bad Request: limit");
       });
   });
-  test.todo("p/limit is out of bounds")
+  test("404: Responds with Not found if page is out of bounds", () => {
+    return request(app).get("/api/articles?p=50").expect(404).then(({body}) => {
+      expect(body.msg).toBe("Not Found")
+    })
+  })
 });
 
 describe("POST /api/articles/", () => {

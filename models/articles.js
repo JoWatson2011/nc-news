@@ -62,25 +62,27 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
 
   sqlQuery += `GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order.toUpperCase()} `;
-  
+
   if (p || limit) {
     limit = limit ? limit : 10; // default parameter instead?
     if (!p) {
       p = 1;
       if (isNaN(parseInt(limit))) {
-        return Promise.reject({ status: 400, msg: "Bad Request" });
+        return Promise.reject({ status: 400, msg: "Bad Request: limit" });
       }
     }
     if (isNaN(parseInt(p))) {
-      return Promise.reject({ status: 400, msg: "Bad Request" });
+      return Promise.reject({ status: 400, msg: "Bad Request: p" });
     }
     // also check for NaN
 
     const sqlParamsIndex = topic ? 2 : 1;
-    const offsetVal = p * limit - limit;
 
     sqlParams.push(limit);
     sqlQuery += `LIMIT $${sqlParamsIndex} `;
+
+    const offsetVal = p * limit - limit;
+
     if (offsetVal > 0) {
       sqlParams.push(offsetVal);
       sqlQuery += `OFFSET $${sqlParamsIndex + 1}`;

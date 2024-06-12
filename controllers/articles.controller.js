@@ -38,6 +38,11 @@ exports.getArticles = (req, res, next) => {
     .then((promiseArr) => {
       const articles = promiseArr[0];
       const total_count = promiseArr[1];
+
+      if (p > total_count / (limit ? limit : 10)) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+
       res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
