@@ -227,7 +227,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("200: Responds with the first 10 articles and total_count property when p query is 1", () => {
+  test("200: Responds with the first 10 articles and total_count property when page (p) query is 1", () => {
     return request(app)
       .get("/api/articles?p=1")
       .expect(200)
@@ -303,9 +303,7 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Bad Request");
       });
   });
-  test.todo(
-    "404: Responds with Not Found if p and l request records higher than total_count"
-  );
+  test.todo("p/limit is out of bounds")
 });
 
 describe("POST /api/articles/", () => {

@@ -1,3 +1,4 @@
+const { off } = require("../app");
 const db = require("../db/connection");
 exports.fetchArticleById = (article_id) => {
   return db
@@ -62,35 +63,30 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
   sqlQuery += `GROUP BY articles.article_id
   ORDER BY ${sort_by} ${order.toUpperCase()} `;
   
-  if (p) {
-
-    if(!parseInt(p)) return Promise.reject({status:400, msg: "Bad Request"})
-
-    if (!limit) {
-      limit = 10;
+  if (p || limit) {
+    limit = limit ? limit : 10; // default parameter instead?
+    if (!p) {
+      p = 1;
+      if (isNaN(parseInt(limit))) {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
     }
+    if (isNaN(parseInt(p))) {
+      return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+    // also check for NaN
 
-    const paramsIndex = topic ? 2 : 1;
+    const sqlParamsIndex = topic ? 2 : 1;
     const offsetVal = p * limit - limit;
 
     sqlParams.push(limit);
-
-    sqlQuery += `LIMIT $${paramsIndex} `;
+    sqlQuery += `LIMIT $${sqlParamsIndex} `;
     if (offsetVal > 0) {
       sqlParams.push(offsetVal);
-      sqlQuery += `OFFSET $${paramsIndex + 1}`;
+      sqlQuery += `OFFSET $${sqlParamsIndex + 1}`;
     }
   }
 
-  if (!p & limit) {
-
-    if (!parseInt(limit))
-      return Promise.reject({ status: 400, msg: "Bad Request" });
-
-    const paramsIndex = topic ? 2 : 1;
-    sqlParams.push(limit);
-    sqlQuery += `LIMIT $${paramsIndex} `;
-  }
   sqlQuery += ";";
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows;
