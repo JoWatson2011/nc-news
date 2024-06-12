@@ -1,3 +1,4 @@
+const { off } = require("../app");
 const db = require("../db/connection");
 exports.fetchArticleById = (article_id) => {
   return db
@@ -22,7 +23,7 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticles = (topic, sort_by, order) => {
+exports.fetchArticles = (topic, sort_by, order, p, limit) => {
   if (!sort_by) {
     sort_by = "created_at";
   }
@@ -50,8 +51,8 @@ exports.fetchArticles = (topic, sort_by, order) => {
   }
 
   let sqlQuery = `SELECT articles.*, CAST(COUNT(comments.comment_id) AS integer) AS comment_count FROM comments
-      RIGHT JOIN articles 
-      ON articles.article_id = comments.article_id `;
+  RIGHT JOIN articles 
+  ON articles.article_id = comments.article_id `;
   const sqlParams = [];
 
   if (topic) {
@@ -60,8 +61,35 @@ exports.fetchArticles = (topic, sort_by, order) => {
   }
 
   sqlQuery += `GROUP BY articles.article_id
-      ORDER BY ${sort_by} ${order.toUpperCase()};`;
+  ORDER BY ${sort_by} ${order.toUpperCase()} `;
 
+  if (p || limit) {
+    limit = limit ? limit : 10; // default parameter instead?
+    if (!p) {
+      p = 1;
+      if (isNaN(parseInt(limit))) {
+        return Promise.reject({ status: 400, msg: "Bad Request: limit" });
+      }
+    }
+    if (isNaN(parseInt(p))) {
+      return Promise.reject({ status: 400, msg: "Bad Request: p" });
+    }
+    // also check for NaN
+
+    const sqlParamsIndex = topic ? 2 : 1;
+
+    sqlParams.push(limit);
+    sqlQuery += `LIMIT $${sqlParamsIndex} `;
+
+    const offsetVal = p * limit - limit;
+
+    if (offsetVal > 0) {
+      sqlParams.push(offsetVal);
+      sqlQuery += `OFFSET $${sqlParamsIndex + 1}`;
+    }
+  }
+
+  sqlQuery += ";";
   return db.query(sqlQuery, sqlParams).then(({ rows }) => {
     return rows;
   });
@@ -80,5 +108,5 @@ exports.addArticle = (newArticle) => {
     )
     .then(({ rows }) => {
       return rows[0];
-    })
+    });
 };

@@ -4,7 +4,7 @@ const {
   addArticle,
 } = require("../models/articles");
 const { fetchComments, addComment } = require("../models/comments");
-const { checkExists, addVotes } = require("../models/utils");
+const { checkExists, addVotes, getTotalCount } = require("../models/utils");
 exports.getArticlesById = (req, res, next) => {
   const { article_id } = req.params;
 
@@ -18,11 +18,11 @@ exports.getArticlesById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, sort_by, order } = req.query;
+  const { topic, sort_by, order, p, limit } = req.query;
 
   Promise.all([
     checkExists("topics", "slug", topic),
-    fetchArticles(topic, sort_by, order),
+    fetchArticles(topic, sort_by, order, p, limit),
   ])
     .then((promiseArr) => {
       const checkTopic = promiseArr[0];
@@ -32,7 +32,18 @@ exports.getArticles = (req, res, next) => {
       return checkTopic ? checkTopic : articles;
     })
     .then((articles) => {
-      res.status(200).send({ articles });
+      if (!p & !limit) res.status(200).send({ articles });
+      return Promise.all([articles, getTotalCount("articles")]);
+    })
+    .then((promiseArr) => {
+      const articles = promiseArr[0];
+      const total_count = promiseArr[1];
+
+      if (p > total_count / (limit ? limit : 10)) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+
+      res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
       next(err);

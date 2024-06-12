@@ -26,3 +26,13 @@ exports.addVotes = (table, column, value, votes) => {
       return rows[0];
     });
 };
+
+exports.getTotalCount = (table) => {
+  const sqlQuery = format("SELECT * FROM %I;", table);
+  return db
+    .query(sqlQuery)
+    .then(({ rows }) => {
+      return rows.length;
+    })
+    .catch((err) => console.log(err));
+}
