@@ -44,7 +44,7 @@ npm test
 
 ## Requirements
 
-The app has been tested with:
+The app has been implemented with:
 
 - Node.js v21.6.1
 - Postgres v2.7.3
