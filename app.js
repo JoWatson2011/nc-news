@@ -1,5 +1,5 @@
 const express = require("express");
-
+const cors = require("cors");
 const {
   apiRouter,
   articlesRouter,
@@ -10,11 +10,12 @@ const {
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
-app.use("/api", apiRouter)
+app.use("/api", apiRouter);
 
-app.use("/api/articles", articlesRouter)
+app.use("/api/articles", articlesRouter);
 
 app.use("/api/comments/", commentsRouter);
 
