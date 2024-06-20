@@ -40,6 +40,7 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
     "created_at",
     "votes",
     "article_img_url",
+    "comment_count"
   ];
 
   if (!sortByValid.includes(sort_by)) {
