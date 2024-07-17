@@ -1,6 +1,6 @@
 # Northcoders News API
 
-`nc-news` is an API which mimics the back-end of a sharing platform such as
+`nc-news` is a RESTful API which mimics the back-end of a sharing platform such as
 Reddit. Users can post articles and interact with posted articles by adding
 comments and upvoting/downvoting. It has been built with Node.js and Postgres
 and deployed with Render: https://nc-news-2qmw.onrender.com/api
