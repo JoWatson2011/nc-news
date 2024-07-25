@@ -67,6 +67,16 @@ describe("POST /api/topics", () => {
         expect(body.msg).toBe("Bad Request: Duplicate topic");
       });
   });
+  test("400: Responds with Bad Request: Malformed when fields are missing", () => {
+    const newTopic = { description: "dogs" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: Malformed");
+      });
+  });
 });
 
 describe("GET /api", () => {
