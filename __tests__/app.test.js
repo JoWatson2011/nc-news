@@ -304,14 +304,17 @@ describe("GET /api/articles", () => {
       });
   });
   test("404: Responds with Not found if page is out of bounds", () => {
-    return request(app).get("/api/articles?p=50").expect(404).then(({body}) => {
-      expect(body.msg).toBe("Not Found")
-    })
-  })
+    return request(app)
+      .get("/api/articles?p=50")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
 });
 
 describe("POST /api/articles/", () => {
-  test("201: Responds with the added article", () => {
+  test("201: Responds with the added article with default article_img_url when it is not provided", () => {
     const newArticle = {
       author: "butter_bridge",
       title: "miaow",
@@ -331,6 +334,35 @@ describe("POST /api/articles/", () => {
           topic: newArticle.topic,
           article_img_url:
             "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          article_id: 14,
+          votes: 0,
+          created_at: expect.any(String),
+          comment_count: 0,
+        });
+      });
+  });
+  test("201: Responds with the added article with specified article_img_url", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "miaow",
+      body: "miaow",
+      topic: "cats",
+      article_img_url:
+        "https://img.icons8.com/?size=100&id=823&format=png&color=000000",
+    };
+
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          author: newArticle.author,
+          title: newArticle.title,
+          body: newArticle.body,
+          topic: newArticle.topic,
+          article_img_url:
+            "https://img.icons8.com/?size=100&id=823&format=png&color=000000",
           article_id: 14,
           votes: 0,
           created_at: expect.any(String),

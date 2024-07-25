@@ -40,7 +40,7 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
     "created_at",
     "votes",
     "article_img_url",
-    "comment_count"
+    "comment_count",
   ];
 
   if (!sortByValid.includes(sort_by)) {
@@ -97,15 +97,23 @@ exports.fetchArticles = (topic, sort_by, order, p, limit) => {
 };
 
 exports.addArticle = (newArticle) => {
-  const { title, topic, author, body } = newArticle;
+  const { title, topic, author, body, article_img_url } = newArticle;
 
   return db
     .query(
-      `INSERT INTO articles (title, topic, author,body)
+      `INSERT INTO articles (title, topic, author, body${
+        article_img_url ? ", article_img_url" : ""
+      })
     VALUES 
-    ($1, $2, $3, $4)
+    ($1, $2, $3, $4${article_img_url ? ", $5" : ""})
     RETURNING *`,
-      [title, topic, author, body]
+      [
+        title,
+        topic,
+        author,
+        body,
+        ...(article_img_url ? [article_img_url] : []),
+      ]
     )
     .then(({ rows }) => {
       return rows[0];
