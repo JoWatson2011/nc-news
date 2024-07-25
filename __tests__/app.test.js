@@ -43,6 +43,21 @@ describe("GET /api/topics", () => {
       });
   });
 });
+describe("POST /api/topics", () => {
+  test("201: Responds with newly added topic", () => {
+    const newTopic = { slug: "dogs", description: "woof" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.topic).toMatchObject({
+          slug: "dogs",
+          description: "woof",
+        });
+      });
+  });
+});
 
 describe("GET /api", () => {
   test("200: Responds with description of the endpoints listed in endpoints.json", () => {
