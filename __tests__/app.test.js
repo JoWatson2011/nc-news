@@ -304,14 +304,17 @@ describe("GET /api/articles", () => {
       });
   });
   test("404: Responds with Not found if page is out of bounds", () => {
-    return request(app).get("/api/articles?p=50").expect(404).then(({body}) => {
-      expect(body.msg).toBe("Not Found")
-    })
-  })
+    return request(app)
+      .get("/api/articles?p=50")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Found");
+      });
+  });
 });
 
 describe("POST /api/articles/", () => {
-  test("201: Responds with the added article", () => {
+  test("201: Responds with the added article with default article_img_url when it is not provided", () => {
     const newArticle = {
       author: "butter_bridge",
       title: "miaow",
