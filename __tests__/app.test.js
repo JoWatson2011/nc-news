@@ -43,6 +43,41 @@ describe("GET /api/topics", () => {
       });
   });
 });
+describe("POST /api/topics", () => {
+  test("201: Responds with newly added topic", () => {
+    const newTopic = { slug: "dogs", description: "woof" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.topic).toMatchObject({
+          slug: "dogs",
+          description: "woof",
+        });
+      });
+  });
+  test("400: Responds with Bad Request: Duplicate topic when topic already exists in database", () => {
+    const newTopic = { slug: "cats", description: "already here" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: Duplicate topic");
+      });
+  });
+  test("400: Responds with Bad Request: Malformed when fields are missing", () => {
+    const newTopic = { description: "dogs" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: Malformed");
+      });
+  });
+});
 
 describe("GET /api", () => {
   test("200: Responds with description of the endpoints listed in endpoints.json", () => {

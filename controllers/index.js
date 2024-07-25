@@ -1,4 +1,4 @@
-const { getTopics } = require("./topics.controller");
+const { getTopics, postTopic } = require("./topics.controller");
 const { getEndpoints } = require("./api.controller");
 const {
   getArticlesById,
@@ -6,13 +6,14 @@ const {
   getArticleComments,
   postArticleComments,
   patchArticle,
-  postArticle
+  postArticle,
 } = require("./articles.controller");
 const { deleteComment, patchComment } = require("./comments.controller");
 const { getUsers, getUserById } = require("./users.controller");
 
 module.exports = {
   getTopics,
+  postTopic,
   getEndpoints,
   getArticlesById,
   getArticles,
@@ -23,5 +24,5 @@ module.exports = {
   getUsers,
   getUserById,
   patchComment,
-  postArticle
+  postArticle,
 };
