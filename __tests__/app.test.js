@@ -57,6 +57,16 @@ describe("POST /api/topics", () => {
         });
       });
   });
+  test("400: Responds with Bad Request: Duplicate topic when topic already exists in database", () => {
+    const newTopic = { slug: "cats", description: "already here" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request: Duplicate topic");
+      });
+  });
 });
 
 describe("GET /api", () => {
