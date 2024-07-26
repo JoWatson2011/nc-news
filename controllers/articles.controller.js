@@ -39,7 +39,7 @@ exports.getArticles = (req, res, next) => {
       const articles = promiseArr[0];
       const total_count = promiseArr[1];
 
-      if (p > total_count / (limit ? limit : 10)) {
+      if (p > total_count || p > (limit ? limit : 10)) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
 
