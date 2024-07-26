@@ -271,6 +271,15 @@ describe("GET /api/articles", () => {
         expect(body.total_count).toBe(13);
       });
   });
+  test("200: Responds with the last articles and total_count property when page (p) query is 2 and total_count is not divisible by 10", () => {
+    return request(app)
+      .get("/api/articles?p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(3);
+        expect(body.total_count).toBe(13);
+      });
+  });
   test("200: Responds with the first x articles and total_count property when p is 1 and limit is x", () => {
     return request(app)
       .get("/api/articles?p=1&limit=3")
