@@ -319,18 +319,26 @@ describe("GET /api/articles", () => {
           expect(article.topic).toBe("mitch");
         });
 
-        expect(body.total_count).toBe(13);
+        expect(body.total_count).toBe(12);
       });
   });
-  test("200: Responds with the first x articles and total_count property when p isn't queried and limit is x", () => {
+  test ("200: total_count is equal to the number of articles of that topic, when a topic query is provided.", () => {
     return request(app)
-      .get("/api/articles?limit=3")
+      .get("/api/articles?p=1&topic=cats")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(3);
-        expect(body.total_count).toBe(13);
+        expect(body.total_count).toBe(1);
       });
   });
+   test("200: Responds with the first x articles and total_count property when p isn't queried and limit is x", () => {
+     return request(app)
+       .get("/api/articles?limit=3")
+       .expect(200)
+       .then(({ body }) => {
+         expect(body.articles).toHaveLength(3);
+         expect(body.total_count).toBe(13);
+       });
+   });
   test("400: Responds with Bad Request: p if p is not a number", () => {
     return request(app)
       .get("/api/articles?p=cats")

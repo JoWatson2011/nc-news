@@ -33,9 +33,10 @@ exports.getArticles = (req, res, next) => {
     })
     .then((articles) => {
       if (!p & !limit) res.status(200).send({ articles });
-      return Promise.all([articles, getTotalCount("articles")]);
+      return Promise.all([articles, getTotalCount("articles", "topic", topic)]);
     })
     .then((promiseArr) => {
+
       const articles = promiseArr[0];
       const total_count = promiseArr[1];
 
